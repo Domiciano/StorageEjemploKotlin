@@ -1,4 +1,4 @@
-package edu.co.icesi.firestoreejemplokotlin
+package edu.co.icesi.firestoreejemplokotlin.models
 
 import java.io.Serializable
 
