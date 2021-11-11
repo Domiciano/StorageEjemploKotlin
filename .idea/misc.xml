@@ -7,7 +7,9 @@
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1355" />
         <entry key="app/src/main/res/layout/activity_chat.xml" value="0.21617097716400596" />
         <entry key="app/src/main/res/layout/activity_home.xml" value="0.19015045166015626" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.24496917724609377" />
+        <entry key="app/src/main/res/layout/activity_profile.xml" value="0.3395612854888474" />
+        <entry key="app/src/main/res/layout/activity_signup.xml" value="0.21354166666666666" />
       </map>
     </option>
   </component>

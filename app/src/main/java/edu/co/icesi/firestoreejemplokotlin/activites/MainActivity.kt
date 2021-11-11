@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
@@ -30,43 +31,51 @@ class MainActivity : AppCompatActivity() {
 
 
         binding.loginBtn.setOnClickListener {
-            val username = binding.usernameET.text.toString()
+            val email = binding.usernameET.text.toString()
             val pass = binding.passET.text.toString()
-            val user = User(UUID.randomUUID().toString(), username, pass)
 
-            val query = Firebase.firestore.collection("users").whereEqualTo("username", username)
-            query.get().addOnCompleteListener { task ->
+            Firebase.auth.signInWithEmailAndPassword(email, pass).addOnSuccessListener {
 
-                //Si el usuario no existe crearlo e iniciar sesion con él
-                if(task.result?.size() == 0){
-                    Firebase.firestore.collection("users").document(user.id).set(user)
-                    val intent = Intent(this, HomeActivity::class.java)
-                    saveUser(user)
-                    startActivity(intent)
+                val fbuser = Firebase.auth.currentUser
+                if(fbuser!!.isEmailVerified){
+                    //Le damos acceso
+
+                    //1. Pedir el usuario almacenado en firestore
+                    Firebase.firestore.collection("users").document(fbuser.uid).get().addOnSuccessListener {
+                        val user = it.toObject(User::class.java)
+                        //2. Salvar al usuario en las SP
+                        saveUser(user!!)
+                        startActivity(Intent(this, HomeActivity::class.java))
+                        finish()
+                    }
+
+
+                }else{
+                    Toast.makeText(this, "Su email no está verificado", Toast.LENGTH_LONG).show()
                 }
 
-                //Si ya existe, descargar el usuario e iniciar sesion con el
-                else{
-                    lateinit var existingUser : User
-                    for(document in task.result!!){
-                        existingUser = document.toObject(User::class.java)
-                        break
-                    }
-                    if(existingUser.pass == pass){
-                        val intent = Intent(this, HomeActivity::class.java)
-                        saveUser(existingUser)
-                        startActivity(intent)
-                    }else{
-                        Toast.makeText(this, "Contraseña incorrecta", Toast.LENGTH_LONG).show()
-                    }
-                }
-
-
+            }.addOnFailureListener {
+                Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
             }
 
 
 
         }
+
+
+        binding.noaccountTV.setOnClickListener {
+            startActivity(Intent(this, SignupActivity::class.java))
+        }
+
+        binding.forgotpassTV.setOnClickListener {
+            Firebase.auth.sendPasswordResetEmail(binding.usernameET.text.toString())
+                .addOnSuccessListener {
+                    Toast.makeText(this, "Revise su correo "+binding.usernameET.text.toString(), Toast.LENGTH_SHORT).show()
+            }.addOnFailureListener {
+                Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
+            }
+        }
+
     }
 
     fun saveUser(user: User){

@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
@@ -31,14 +32,14 @@ class HomeActivity : AppCompatActivity() {
 
         //Cargar el usuario de los SP
         val user = loadUser()
-        if(user == null){
+        if(user == null || Firebase.auth.currentUser == null || Firebase.auth.currentUser?.isEmailVerified == false){
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()
             return
         }else{
             this.user = user
-            Toast.makeText(this, "Hola ${user.username}", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Hola ${user.name}", Toast.LENGTH_LONG).show()
         }
 
 
@@ -74,6 +75,12 @@ class HomeActivity : AppCompatActivity() {
             Firebase.messaging.unsubscribeFromTopic(user.id)
             val sp = getSharedPreferences("appmoviles", MODE_PRIVATE)
             sp.edit().clear().apply()
+            Firebase.auth.signOut()
+        }
+
+        binding.nameTV.text = user.name
+        binding.nameTV.setOnClickListener {
+            startActivity(Intent(this, ProfileActivity::class.java))
         }
 
 

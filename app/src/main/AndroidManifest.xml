@@ -10,11 +10,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FirestoreEjemploKotlin">
         <activity
+            android:name=".activites.ProfileActivity"
+            android:exported="true" />
+        <activity
+            android:name=".activites.SignupActivity"
+            android:exported="true" />
+        <activity
             android:name=".activites.ChatActivity"
             android:exported="true" />
         <activity
             android:name=".activites.HomeActivity"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,16 +29,13 @@
         </activity>
         <activity
             android:name=".activites.MainActivity"
-            android:exported="true">
-
-        </activity>
+            android:exported="true" />
 
         <service android:name=".fcm.FCMService">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
     </application>
 
 </manifest>
