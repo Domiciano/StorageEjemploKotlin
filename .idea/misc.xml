@@ -8,8 +8,9 @@
         <entry key="app/src/main/res/layout/activity_chat.xml" value="0.21617097716400596" />
         <entry key="app/src/main/res/layout/activity_home.xml" value="0.19015045166015626" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.24496917724609377" />
-        <entry key="app/src/main/res/layout/activity_profile.xml" value="0.3395612854888474" />
+        <entry key="app/src/main/res/layout/activity_profile.xml" value="0.29414197396540986" />
         <entry key="app/src/main/res/layout/activity_signup.xml" value="0.21354166666666666" />
+        <entry key="app/src/main/res/layout/contactrow.xml" value="0.43917828988337865" />
       </map>
     </option>
   </component>
