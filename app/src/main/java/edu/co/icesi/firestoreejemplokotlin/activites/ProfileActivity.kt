@@ -36,6 +36,9 @@ class ProfileActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         user = loadUser()!!
+        binding.profileUserTV.text = user.name
+        binding.profileEmailTV.text = user.email
+
 
         getUpdatedUser()
 
@@ -62,6 +65,9 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     fun downloadImage(photoID:String?){
+
+        if(photoID == null) return
+
         Firebase.storage.getReference().child("profile").child(photoID!!).downloadUrl.addOnSuccessListener {
             Glide.with(binding.profileImg).load(it).into(binding.profileImg)
         }

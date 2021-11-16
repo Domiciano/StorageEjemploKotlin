@@ -5,11 +5,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
 import com.google.gson.Gson
+import edu.co.icesi.firestoreejemplokotlin.adapters.ContactAdapter
 import edu.co.icesi.firestoreejemplokotlin.databinding.ActivityHomeBinding
 import edu.co.icesi.firestoreejemplokotlin.models.User
 
@@ -17,8 +19,7 @@ class HomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeBinding
 
-    private lateinit var adapter: ArrayAdapter<User>
-    private lateinit var users: ArrayList<User>
+    private lateinit var adapter: ContactAdapter
 
     private lateinit var user: User
 
@@ -46,27 +47,19 @@ class HomeActivity : AppCompatActivity() {
         Firebase.messaging.subscribeToTopic(user.id)
 
 
-        users = ArrayList()
-        adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, users)
+        adapter = ContactAdapter()
         binding.userListView.adapter = adapter
+        binding.userListView.layoutManager = LinearLayoutManager(this)
+        binding.userListView.setHasFixedSize(true)
+
+        getUsers()
 
 
-        Firebase.firestore.collection("users").get().addOnCompleteListener { task->
-            for(doc in task.result!!){
-                val user = doc.toObject(User::class.java)
-                users.add(user)
-                adapter.notifyDataSetChanged()
-            }
-        }
-
+        /*
         binding.userListView.setOnItemClickListener { parent, view, position, id ->
-            val contact = users[position]
-            val intent = Intent(this, ChatActivity::class.java).apply {
-                putExtra("contact", contact)
-                putExtra("user", user)
-            }
-            startActivity(intent)
+
         }
+         */
 
         binding.logoutBTN.setOnClickListener {
             finish()
@@ -83,7 +76,24 @@ class HomeActivity : AppCompatActivity() {
             startActivity(Intent(this, ProfileActivity::class.java))
         }
 
+        //Swipe refresh
+        binding.userSRL.setOnRefreshListener {
+            getUsers()
 
+        }
+
+
+    }
+
+    fun getUsers(){
+        Firebase.firestore.collection("users").get().addOnCompleteListener { task->
+            adapter.clear()
+            for(doc in task.result!!){
+                val user = doc.toObject(User::class.java)
+                adapter.addUser(user)
+            }
+            binding.userSRL.isRefreshing = false
+        }
     }
 
     fun loadUser():User?{
